@@ -1,15 +1,21 @@
+import { store } from 'app/store';
+import HistoryRouter from 'common/layouts/HistoryRouter';
+import { history } from 'common/logic/history';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
+import { Provider } from 'react-redux';
 import App from './App';
+import './index.css';
 import reportWebVitals from './reportWebVitals';
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
   <React.StrictMode>
-    <App />
+    <HistoryRouter history={history}>
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </HistoryRouter>
   </React.StrictMode>
 );
 
