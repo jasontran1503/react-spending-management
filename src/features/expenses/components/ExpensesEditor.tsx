@@ -16,6 +16,7 @@ import {
 } from 'features/category/categorySlice';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 import '../Expenses.css';
 import { NewExpensesRequest } from '../expensesModel';
@@ -30,6 +31,7 @@ const ExpensesEditor = () => {
   const [categoryIndex, setCategoryIndex] = useState<number>(0);
   const [category, setCategory] = useState<Category>(() => categories[0]);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const validation = yup.object().shape({
     createdAt: yup.string().required('Ngày không được để trống'),
@@ -143,7 +145,7 @@ const ExpensesEditor = () => {
               <Loading />
             ) : (
               <div className="categories">
-                <div className="category-item">
+                <div className="category-item" onClick={() => navigate('/category/list')}>
                   <i className="fa fa-pencil" aria-hidden="true"></i>
                   <span className="category-name">Chỉnh sửa</span>
                 </div>

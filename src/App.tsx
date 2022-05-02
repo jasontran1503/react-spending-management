@@ -1,5 +1,4 @@
 import { useAppDispatch } from 'app/hooks';
-import PrivateRoute from 'common/layouts/PrivateRoute';
 import { getStorage } from 'common/logic/storage';
 import { setToken } from 'common/logic/token';
 import { authActions } from 'features/auth/authSlice';
@@ -10,8 +9,7 @@ import { ToastContainer } from 'react-toastify';
 import './App.css';
 
 const Auth = React.lazy(() => import('./features/auth/Auth'));
-const Expenses = React.lazy(() => import('./features/expenses/Expenses'));
-// const NotFound = React.lazy(() => import('./features/category'));
+const Header = React.lazy(() => import('./common/layouts/Header/Header'));
 const NotFound = React.lazy(() => import('./common/layouts/NotFound/NotFound'));
 
 function App() {
@@ -27,12 +25,10 @@ function App() {
       )
     },
     {
-      path: 'expenses/*',
+      path: '/*',
       element: (
         <React.Suspense fallback={<Loading />}>
-          <PrivateRoute>
-            <Expenses />
-          </PrivateRoute>
+          <Header />
         </React.Suspense>
       )
     },

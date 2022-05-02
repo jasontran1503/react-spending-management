@@ -23,6 +23,20 @@ const categorySlice = createSlice({
     getCategoryFail: (state) => {
       state.isLoading = false;
       state.categories = [];
+    },
+
+    // Delete category
+    deleteCategoryBegin: (state, action) => {
+      state.isLoading = true;
+    },
+    deleteCategorySuccess: (state, action: PayloadAction<DataResponse<Category>>) => {
+      state.isLoading = false;
+      state.categories = state.categories.filter(
+        (category) => category._id !== action.payload.data._id
+      );
+    },
+    deleteCategoryFail: (state) => {
+      state.isLoading = false;
     }
   }
 });

@@ -1,4 +1,3 @@
-import Header from 'common/layouts/Header/Header';
 import React from 'react';
 import { Navigate, useRoutes } from 'react-router-dom';
 import ExpensesCalendar from './components/ExpensesCalendar';
@@ -18,12 +17,7 @@ const Expenses = () => {
     }
   ]);
 
-  return (
-    <>
-      <Header />
-      {routes}
-    </>
-  );
+  return <>{routes}</>;
 };
 
 export default Expenses;

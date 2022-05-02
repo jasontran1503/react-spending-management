@@ -1,30 +1,61 @@
 import React, { useState } from 'react';
+import Loading from 'react-loading';
+import { Link, Outlet, useRoutes } from 'react-router-dom';
+import PrivateRoute from '../PrivateRoute';
 import './Header.css';
-import { Link } from 'react-router-dom';
+
+const Expenses = React.lazy(() => import('features/expenses/Expenses'));
+const Category = React.lazy(() => import('features/category/Category'));
 
 const Header = () => {
   const [active, setActive] = useState<number>(0);
-  const routes = [
-    { to: 'editor', icon: 'plus-circle', text: 'Nhập liệu' },
-    { to: 'calendar', icon: 'calendar', text: 'Lịch' },
-    { to: 'report', icon: 'pie-chart', text: 'Báo cáo' },
+  const links = [
+    { to: 'expenses/editor', icon: 'plus-circle', text: 'Nhập liệu' },
+    { to: 'expenses/calendar', icon: 'calendar', text: 'Lịch' },
+    { to: 'expenses/report', icon: 'pie-chart', text: 'Báo cáo' },
     { to: 'other', icon: 'ellipsis-h', text: 'Khác' }
   ];
+  const routes = useRoutes([
+    {
+      path: 'expenses/*',
+      element: (
+        <React.Suspense fallback={<Loading />}>
+          <PrivateRoute>
+            <Expenses />
+          </PrivateRoute>
+        </React.Suspense>
+      )
+    },
+    {
+      path: 'category/*',
+      element: (
+        <React.Suspense fallback={<Loading />}>
+          <PrivateRoute>
+            <Category />
+          </PrivateRoute>
+        </React.Suspense>
+      )
+    }
+  ]);
 
   return (
-    <nav className="nav">
-      {routes.map((route, index) => (
-        <Link
-          to={route.to}
-          className={`nav__link ${active === index ? 'nav-active' : ''}`}
-          key={route.text}
-          onClick={() => setActive(index)}
-        >
-          <i className={`fa fa-${route.icon}`} aria-hidden="true"></i>
-          <span className="nav__text">{route.text}</span>
-        </Link>
-      ))}
-    </nav>
+    <>
+      <nav className="nav">
+        {links.map((link, index) => (
+          <Link
+            to={link.to}
+            className={`nav__link ${active === index ? 'nav-active' : ''}`}
+            key={link.text}
+            onClick={() => setActive(index)}
+          >
+            <i className={`fa fa-${link.icon}`} aria-hidden="true"></i>
+            <span className="nav__text">{link.text}</span>
+          </Link>
+        ))}
+      </nav>
+      {routes}
+      <Outlet />
+    </>
   );
 };
 

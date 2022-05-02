@@ -1,9 +1,3 @@
-.main {
-  height: calc(80vh - 55px);
-  margin-top: 20px;
-  text-align: center;
-}
-
 .categories {
   height: calc(80vh - 55px - 270px);
   width: 100%;
