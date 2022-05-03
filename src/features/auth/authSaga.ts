@@ -16,7 +16,7 @@ function* handleLogin(action: PayloadAction<LoginRequest>) {
   } catch (error) {
     const errorResponse = error as DataResponse<null>;
     yield put(authActions.loginFail(error as DataResponse<null>));
-    yield toastify('error', errorResponse.message);
+    yield call(toastify, 'error', errorResponse.message);
   }
 }
 
@@ -25,12 +25,12 @@ function* handleRegister(action: PayloadAction<RegisterRequest>) {
   try {
     const response: DataResponse<User> = yield call(authApi.register, action.payload);
     yield put(authActions.registerSuccess(response));
-    yield toastify('success', response.message);
+    yield call(toastify, 'success', response.message);
     yield call(history.push, '/auth/login');
   } catch (error) {
     const errorResponse = error as DataResponse<null>;
     yield put(authActions.registerFail());
-    yield toastify('error', errorResponse.message);
+    yield call(toastify, 'error', errorResponse.message);
   }
 }
 
@@ -42,7 +42,7 @@ function* handleGetCurrentUser() {
   } catch (error) {
     const errorResponse = error as DataResponse<null>;
     yield put(authActions.getCurrentUserFail());
-    yield toastify('error', errorResponse.message);
+    yield call(toastify, 'error', errorResponse.message);
   }
 }
 

@@ -10,7 +10,19 @@ const Expenses = () => {
     {
       path: '',
       children: [
-        { path: 'editor', element: <ExpensesEditor /> },
+        {
+          path: 'editor',
+          children: [
+            {
+              path: '',
+              element: <ExpensesEditor />
+            },
+            {
+              path: ':expensesId',
+              element: <ExpensesEditor />
+            }
+          ]
+        },
         { path: 'calendar', element: <ExpensesCalendar /> },
         { path: 'report', element: <ExpensesReport /> }
       ]

@@ -10,7 +10,16 @@ const Category = () => {
       children: [
         {
           path: 'editor',
-          element: <CategoryEditor />
+          children: [
+            {
+              path: '',
+              element: <CategoryEditor />
+            },
+            {
+              path: ':categoryId',
+              element: <CategoryEditor />
+            }
+          ]
         },
         {
           path: 'list',

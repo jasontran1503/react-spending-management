@@ -16,9 +16,15 @@
 }
 
 .main {
-  height: calc(80vh - 55px);
+  height: calc(100% - 55px);
   margin-top: 20px;
   text-align: center;
+}
+
+.display-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 @media only screen and (max-width: 768px) {

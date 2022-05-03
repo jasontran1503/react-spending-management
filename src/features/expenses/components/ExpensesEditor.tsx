@@ -81,12 +81,16 @@ const ExpensesEditor = () => {
 
   return (
     <div className="main">
-      <form style={{ display: 'flex', justifyContent: 'center' }} onSubmit={handleSubmit(onSubmit)}>
+      <form
+        style={{ display: 'flex', justifyContent: 'center', height: '100%' }}
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <Box
           sx={{
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
+            height: '100%',
             '& .MuiTextField-root': {
               width: {
                 xs: '30ch',
@@ -140,30 +144,32 @@ const ExpensesEditor = () => {
             })}
           />
 
-          <>
-            {categoryLoading ? (
-              <Loading />
-            ) : (
-              <div className="categories">
-                <div className="category-item" onClick={() => navigate('/category/list')}>
-                  <i className="fa fa-pencil" aria-hidden="true"></i>
-                  <span className="category-name">Chỉnh sửa</span>
-                </div>
-                {categories.map((category, index) => (
-                  <Tooltip title={category.name} key={index}>
-                    <div
-                      className={`category-item ${categoryIndex === index ? 'active' : ''}`}
-                      style={{ color: category.color }}
-                      onClick={() => handleSelectedCategory(category, index)}
-                    >
-                      <i className={`fa fa-${category.icon}`} aria-hidden="true"></i>
-                      <span className="category-name">{category.name}</span>
-                    </div>
-                  </Tooltip>
-                ))}
-              </div>
-            )}
-          </>
+          <div className={`categories ${categoryLoading ? 'display-center' : ''}`}>
+            <>
+              {categoryLoading ? (
+                <Loading />
+              ) : (
+                <>
+                  <div className="category-item" onClick={() => navigate('/category/list')}>
+                    <i className="fa fa-pencil" aria-hidden="true"></i>
+                    <span className="category-name">Chỉnh sửa</span>
+                  </div>
+                  {categories.map((category, index) => (
+                    <Tooltip title={category.name} key={index}>
+                      <div
+                        className={`category-item ${categoryIndex === index ? 'active' : ''}`}
+                        style={{ color: category.color }}
+                        onClick={() => handleSelectedCategory(category, index)}
+                      >
+                        <i className={`fa fa-${category.icon}`} aria-hidden="true"></i>
+                        <span className="category-name">{category.name}</span>
+                      </div>
+                    </Tooltip>
+                  ))}
+                </>
+              )}
+            </>
+          </div>
 
           <LoadingButton
             size="medium"

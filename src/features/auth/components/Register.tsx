@@ -5,11 +5,12 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import { useForm } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import * as yup from 'yup';
 import '../Auth.css';
 import { RegisterRequest } from '../authModel';
 import { authActions, selectAuthLoading } from '../authSlice';
+
 const Register = () => {
   const loading = useAppSelector(selectAuthLoading);
   const dispatch = useAppDispatch();
@@ -32,7 +33,6 @@ const Register = () => {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors }
   } = useForm<RegisterRequest>({
     mode: 'onTouched',
@@ -40,12 +40,7 @@ const Register = () => {
   });
 
   const onSubmit = (request: RegisterRequest) => {
-    try {
-      dispatch(authActions.registerBegin(request));
-      // navigate('/auth/login')
-    } catch (error) {
-      console.log(error)
-    }
+    dispatch(authActions.registerBegin(request));
   };
 
   return (

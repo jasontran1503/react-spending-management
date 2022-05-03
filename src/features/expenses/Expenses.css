@@ -1,5 +1,5 @@
 .categories {
-  height: calc(80vh - 55px - 270px);
+  height: calc(100% - 55px - 210px);
   width: 100%;
   display: grid;
   grid-template-columns: auto auto auto;
@@ -42,4 +42,13 @@
 
 ::-webkit-scrollbar {
   display: none;
+}
+
+.total-money {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 20px;
+  color: #1976d2;
+  margin-bottom: 10px;
 }

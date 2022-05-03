@@ -2,6 +2,7 @@ import { Category } from 'features/category/categoryModel';
 export interface ExpensesState {
   isLoading: boolean;
   expensesList: ExpensesItem[];
+  expensesDaily: ExpensesDaily;
 }
 
 export interface NewExpensesRequest {
@@ -27,4 +28,9 @@ export interface ExpensesItem {
   note: string;
   category: Category;
   user: string;
+}
+
+export interface ExpensesDaily {
+  dailyExpensesList: ExpensesItem[];
+  totalMoney: number;
 }
