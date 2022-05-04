@@ -1,43 +1,66 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { DataResponse } from 'app/axiosApi';
 import { RootState } from 'app/store';
-import { ExpensesDaily, ExpensesItem, ExpensesState } from './expensesModel';
+import { ExpensesItem, ExpensesState } from './expensesModel';
 
 const initialState: ExpensesState = {
   isLoading: false,
-  expensesList: [],
-  expensesDaily: {
-    dailyExpensesList: [],
-    totalMoney: 0
-  }
+  expensesList: []
 };
 
 const expensesSlice = createSlice({
   name: 'expenses',
   initialState,
   reducers: {
+    // Get all expenses
+    getAllExpensesBegin: (state) => {
+      state.isLoading = true;
+    },
+    getAllExpensesSuccess: (state, action: PayloadAction<DataResponse<ExpensesItem[]>>) => {
+      state.isLoading = false;
+      state.expensesList = action.payload.data;
+    },
+    getAllExpensesFail: (state) => {
+      state.isLoading = false;
+      state.expensesList = [];
+    },
+
     // Create new expenses
     createExpensesBegin: (state, action) => {
       state.isLoading = true;
     },
-    createExpensesSuccess: (state, action: PayloadAction<DataResponse<ExpensesItem[]>>) => {
+    createExpensesSuccess: (state, action: PayloadAction<DataResponse<ExpensesItem>>) => {
       state.isLoading = false;
-      state.expensesList = action.payload.data;
+      state.expensesList = [...state.expensesList, action.payload.data];
     },
     createExpensesFail: (state) => {
       state.isLoading = false;
       state.expensesList = [];
     },
 
-    // Report daily expenses
-    reportDailyBegin: (state, action) => {
+    // Delete new expenses
+    deleteExpensesBegin: (state, action) => {
       state.isLoading = true;
     },
-    reportDailySuccess: (state, action: PayloadAction<DataResponse<ExpensesDaily>>) => {
+    deleteExpensesSuccess: (state, action: PayloadAction<DataResponse<ExpensesItem>>) => {
       state.isLoading = false;
-      state.expensesDaily = action.payload.data;
     },
-    reportDailyFail: (state) => {
+    deleteExpensesFail: (state) => {
+      state.isLoading = false;
+    },
+
+    // Update expenses
+    updateExpensesBegin: (state, action) => {
+      state.isLoading = true;
+    },
+    updateExpensesSuccess: (state, action: PayloadAction<DataResponse<ExpensesItem>>) => {
+      state.isLoading = false;
+      state.expensesList = state.expensesList.map((item) => {
+        const { _id, category, createdAt, money, note } = action.payload.data;
+        return item._id === _id ? { ...item, category, createdAt, money, note } : item;
+      });
+    },
+    updateExpensesFail: (state) => {
       state.isLoading = false;
     }
   }
@@ -47,11 +70,6 @@ export const expensesActions = expensesSlice.actions;
 
 export const selectExpensesList = (state: RootState) => state.expenses.expensesList;
 export const selectExpensesLoading = (state: RootState) => state.expenses.isLoading;
-
-export const selectExpensesDailyList = (state: RootState) =>
-  state.expenses.expensesDaily.dailyExpensesList;
-export const selectExpensesDailyMoney = (state: RootState) =>
-  state.expenses.expensesDaily.totalMoney;
 
 const expensesReducer = expensesSlice.reducer;
 export default expensesReducer;

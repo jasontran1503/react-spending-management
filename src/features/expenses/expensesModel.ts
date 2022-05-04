@@ -1,8 +1,8 @@
 import { Category } from 'features/category/categoryModel';
+
 export interface ExpensesState {
   isLoading: boolean;
   expensesList: ExpensesItem[];
-  expensesDaily: ExpensesDaily;
 }
 
 export interface NewExpensesRequest {

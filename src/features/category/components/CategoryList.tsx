@@ -5,16 +5,21 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { useAppSelector } from 'app/hooks';
+import { useAppDispatch, useAppSelector } from 'app/hooks';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { selectCategories, selectCategoryLoading } from '../categorySlice';
+import { categoryActions, selectCategories, selectCategoryLoading } from '../categorySlice';
 import CategoryItem from './CategoryItem';
 
 const CategoryList = () => {
   const categories = useAppSelector(selectCategories);
   const loading = useAppSelector(selectCategoryLoading);
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  const handleDeleteCategory = (categoryId: string) => {
+    dispatch(categoryActions.deleteCategoryBegin(categoryId));
+  };
 
   return (
     <Box
@@ -40,9 +45,12 @@ const CategoryList = () => {
           {categories.map((category) => (
             <div key={category._id}>
               <CategoryItem
+                itemId={category._id}
                 category={category}
                 loading={loading}
                 url={`/category/editor/${category._id}`}
+                showIconDelete={true}
+                onDeleteItem={handleDeleteCategory}
               />
             </div>
           ))}

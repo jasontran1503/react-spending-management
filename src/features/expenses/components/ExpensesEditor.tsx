@@ -6,6 +6,7 @@ import Tooltip from '@mui/material/Tooltip';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import expensesApi from 'apis/expensesApi';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import Loading from 'common/layouts/Loading/Loading';
 import { Category } from 'features/category/categoryModel';
@@ -16,13 +17,14 @@ import {
 } from 'features/category/categorySlice';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import * as yup from 'yup';
 import '../Expenses.css';
 import { NewExpensesRequest } from '../expensesModel';
 import { expensesActions, selectExpensesLoading } from '../expensesSlice';
 
 const ExpensesEditor = () => {
+  const { expensesId } = useParams();
   const categories = useAppSelector(selectCategories);
   const categoryLoading = useAppSelector(selectCategoryLoading);
   const expensesLoading = useAppSelector(selectExpensesLoading);
@@ -52,13 +54,41 @@ const ExpensesEditor = () => {
     resolver: yupResolver(validation)
   });
 
+  useEffect(() => {
+    dispatch(categoryActions.getCategoryBegin());
+    // dispatch(expensesActions.getAllExpensesBegin());
+  }, []);
+
+  useEffect(() => {
+    const getSingleExpenses = async () => {
+      if (expensesId) {
+        const response = await expensesApi.getSingleExpenses(expensesId);
+        setDate(new Date(response.createdAt));
+        setValue('note', response.note);
+        formatMoney(String(response.money));
+        const index = categories.findIndex((category) => category._id === response.category?._id);
+        handleSelectedCategory(response.category, index);
+      }
+    };
+
+    getSingleExpenses();
+  }, []);
+
   const onSubmit = (request: { note: string; money: string; createdAt: string }) => {
     const expensesRequest: NewExpensesRequest = {
       ...request,
       money: request.money.replace(/,/g, ''),
       category: category && category._id
     };
-    dispatch(expensesActions.createExpensesBegin(expensesRequest));
+    if (!expensesId) {
+      dispatch(expensesActions.createExpensesBegin(expensesRequest));
+    } else {
+      const updatedRequest = {
+        expensesRequest,
+        expensesId
+      };
+      dispatch(expensesActions.updateExpensesBegin(updatedRequest));
+    }
   };
 
   const handleSelectedCategory = (category: Category, index: number) => {
@@ -74,10 +104,6 @@ const ExpensesEditor = () => {
     const value = getValues('money');
     formatMoney(value);
   };
-
-  useEffect(() => {
-    dispatch(categoryActions.getCategoryBegin());
-  }, []);
 
   return (
     <div className="main">

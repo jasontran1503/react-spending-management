@@ -3,30 +3,34 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { useAppDispatch } from 'app/hooks';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Category } from '../categoryModel';
-import { categoryActions } from '../categorySlice';
 
 const CategoryItem = ({
+  itemId,
   category,
   loading,
   url,
-  money
+  money,
+  showIconDelete,
+  onDeleteItem
 }: {
+  itemId: string;
   category: Category;
-  loading: boolean;
+  loading?: boolean;
   url: string;
   money?: number;
+  showIconDelete: boolean;
+  onDeleteItem?: (id: string) => void;
 }) => {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const [categoryId, setCategoryId] = useState<string>('');
+  const [selectedItemId, setSelectedItemId] = useState<string>('');
 
-  const handleDeleteCategory = (categoryId: string) => {
-    setCategoryId(categoryId);
-    dispatch(categoryActions.deleteCategoryBegin(categoryId));
+  const handleDeleteItem = (id: string) => {
+    if (onDeleteItem) {
+      onDeleteItem(id);
+    }
   };
 
   return (
@@ -35,36 +39,44 @@ const CategoryItem = ({
         <ListItemButton>
           <ListItemIcon style={{ display: 'flex', justifyContent: 'center' }}>
             <i
-              className={`fa fa-${category.icon}`}
-              style={{ color: category.color }}
+              className={`fa fa-${category ? category.icon : 'ellipsis-h'}`}
+              style={{ color: category && category.color }}
               aria-hidden="true"
             ></i>
           </ListItemIcon>
-          <ListItemText primary={category.name} style={{ color: category.color }} />
+          <ListItemText
+            primary={category ? category.name : 'Không có'}
+            style={{ color: category && category.color }}
+          />
           <div className="display-center">
             {money && (
               <ListItemText
                 primary={money.toLocaleString('en-US')}
-                style={{ color: category.color }}
+                style={{ color: category && category.color }}
               />
             )}
-            <ListItemIcon style={{ display: 'flex', justifyContent: 'center' }}>
-              <>
-                {loading && categoryId === category._id ? (
-                  <i className="fa fa-spinner fa-spin" aria-hidden="true"></i>
-                ) : (
-                  <i
-                    className="fa fa-trash"
-                    style={{ color: 'red' }}
-                    aria-hidden="true"
-                    onClick={(e: React.MouseEvent<HTMLElement, MouseEvent>) => {
-                      e.stopPropagation();
-                      handleDeleteCategory(category._id);
-                    }}
-                  ></i>
-                )}
-              </>
-            </ListItemIcon>
+            <>
+              {showIconDelete && (
+                <ListItemIcon style={{ display: 'flex', justifyContent: 'center' }}>
+                  <>
+                    {loading && itemId === selectedItemId ? (
+                      <i className="fa fa-spinner fa-spin" aria-hidden="true"></i>
+                    ) : (
+                      <i
+                        className="fa fa-trash"
+                        style={{ color: 'red' }}
+                        aria-hidden="true"
+                        onClick={(e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+                          e.stopPropagation();
+                          setSelectedItemId(itemId);
+                          handleDeleteItem(itemId);
+                        }}
+                      ></i>
+                    )}
+                  </>
+                </ListItemIcon>
+              )}
+            </>
           </div>
         </ListItemButton>
       </ListItem>
