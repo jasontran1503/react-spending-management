@@ -9,6 +9,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import expensesApi from 'apis/expensesApi';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import Loading from 'common/layouts/Loading/Loading';
+import formatDate from 'common/logic/formatDate';
 import { Category } from 'features/category/categoryModel';
 import {
   categoryActions,
@@ -31,7 +32,7 @@ const ExpensesEditor = () => {
 
   const [date, setDate] = useState<Date | null>(new Date());
   const [categoryIndex, setCategoryIndex] = useState<number>(0);
-  const [category, setCategory] = useState<Category>(() => categories[0]);
+  const [category, setCategory] = useState<Category>(categories[0]);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -56,14 +57,17 @@ const ExpensesEditor = () => {
 
   useEffect(() => {
     dispatch(categoryActions.getCategoryBegin());
-    // dispatch(expensesActions.getAllExpensesBegin());
   }, []);
+
+  useEffect(() => {
+    setCategory(categories[0]);
+  }, [categories]);
 
   useEffect(() => {
     const getSingleExpenses = async () => {
       if (expensesId) {
         const response = await expensesApi.getSingleExpenses(expensesId);
-        setDate(new Date(response.createdAt));
+        onChangeDate(new Date(response.createdAt));
         setValue('note', response.note);
         formatMoney(String(response.money));
         const index = categories.findIndex((category) => category._id === response.category?._id);
@@ -77,6 +81,7 @@ const ExpensesEditor = () => {
   const onSubmit = (request: { note: string; money: string; createdAt: string }) => {
     const expensesRequest: NewExpensesRequest = {
       ...request,
+      createdAt: date ? formatDate(date) : '',
       money: request.money.replace(/,/g, ''),
       category: category && category._id
     };
@@ -88,6 +93,12 @@ const ExpensesEditor = () => {
         expensesId
       };
       dispatch(expensesActions.updateExpensesBegin(updatedRequest));
+    }
+  };
+
+  const onChangeDate = (date: Date | null) => {
+    if (date) {
+      setDate(date);
     }
   };
 
@@ -132,9 +143,7 @@ const ExpensesEditor = () => {
             <DatePicker
               label="Ngày"
               value={date}
-              onChange={(newValue) => {
-                setDate(newValue);
-              }}
+              onChange={onChangeDate}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -207,7 +216,7 @@ const ExpensesEditor = () => {
             loading={expensesLoading}
             disabled={expensesLoading ? true : false}
           >
-            Nhập khoản chi
+            {expensesId ? 'Sửa khoản chi' : 'Nhập khoản chi'}
           </LoadingButton>
         </Box>
       </form>

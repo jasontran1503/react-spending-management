@@ -2,42 +2,38 @@ import TextField from '@mui/material/TextField';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
-import expensesApi from 'apis/expensesApi';
 import { useAppDispatch, useAppSelector } from 'app/hooks';
 import Loading from 'common/layouts/Loading/Loading';
-import { format } from 'date-fns';
+import formatDate from 'common/logic/formatDate';
 import CategoryItem from 'features/category/components/CategoryItem';
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import '../Expenses.css';
-import { ExpensesItem } from '../expensesModel';
-import { expensesActions, selectExpensesLoading } from '../expensesSlice';
+import {
+  expensesActions,
+  selectDailyExpensesList,
+  selectDailyExpensesMoney,
+  selectExpensesLoading
+} from '../expensesSlice';
 
 const ExpensesCalendar = () => {
-  const [dateValue, setDateValue] = useState<Date | null>(new Date());
+  const { date } = useParams();
+  const [dateValue, setDateValue] = useState<Date | null>(date ? new Date(date) : new Date());
   const dispatch = useAppDispatch();
   const loading = useAppSelector(selectExpensesLoading);
-  const [expensesDailyList, setExpensesDailyList] = useState<ExpensesItem[]>([]);
-  const [expensesDailyMoney, setExpensesDailyMoney] = useState<number>(0);
+  const expensesDailyList = useAppSelector(selectDailyExpensesList);
+  const expensesDailyMoney = useAppSelector(selectDailyExpensesMoney);
 
   const reportExpensesDaily = async () => {
     let result = '';
     if (dateValue) {
-      result = format(dateValue, 'MM-dd-yyyy');
+      result = formatDate(dateValue);
     }
-    const { dailyExpensesList, totalMoney } = await expensesApi.reportDaily(result);
-    setExpensesDailyList(dailyExpensesList);
-    setExpensesDailyMoney(totalMoney);
+    dispatch(expensesActions.reportDailyExpensesBegin(result));
   };
 
   const handleDeleteExpenses = (expensesId: string) => {
     dispatch(expensesActions.deleteExpensesBegin(expensesId));
-    const newExpensesDailyList = expensesDailyList.filter((item) => {
-      if (item._id === expensesId) {
-        setExpensesDailyMoney(expensesDailyMoney - item.money);
-      }
-      return item._id !== expensesId;
-    });
-    setExpensesDailyList(newExpensesDailyList);
   };
 
   useEffect(() => {
@@ -62,7 +58,11 @@ const ExpensesCalendar = () => {
 
       <div className="total-money">
         <strong>Tổng chi:</strong>
-        <strong>{expensesDailyMoney.toLocaleString('en-US')}đ</strong>
+        {loading ? (
+          <i className="fa fa-spinner fa-spin" aria-hidden="true"></i>
+        ) : (
+          <strong>{expensesDailyMoney.toLocaleString('en-US')}đ</strong>
+        )}
       </div>
 
       <div

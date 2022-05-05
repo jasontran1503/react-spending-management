@@ -1,5 +1,10 @@
 import axiosApi, { DataResponse } from 'app/axiosApi';
-import { ExpensesDaily, ExpensesItem, NewExpensesRequest } from 'features/expenses/expensesModel';
+import {
+  ExpensesDaily,
+  ExpensesItem,
+  ExpensesMonthly,
+  NewExpensesRequest
+} from 'features/expenses/expensesModel';
 
 const createExpenses = async (body: NewExpensesRequest) => {
   return axiosApi.post<DataResponse<ExpensesItem>>('expenses/create', body).then((res) => res.data);
@@ -33,13 +38,20 @@ const reportDaily = async (day: string) => {
     .then((res) => res.data.data);
 };
 
+const reportMonthly = async (date: string) => {
+  return axiosApi
+    .get<DataResponse<ExpensesMonthly>>('expenses/monthly', { params: { date } })
+    .then((res) => res.data.data);
+};
+
 const expensesApi = {
   createExpenses,
   deleteExpenses,
   reportDaily,
   getSingleExpenses,
   updateExpenses,
-  getAllExpenses
+  getAllExpenses,
+  reportMonthly
 };
 
 export default expensesApi;

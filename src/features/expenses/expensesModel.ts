@@ -2,7 +2,11 @@ import { Category } from 'features/category/categoryModel';
 
 export interface ExpensesState {
   isLoading: boolean;
-  expensesList: ExpensesItem[];
+  // expensesList: ExpensesItem[];
+  expensesDaily: {
+    dailyExpensesList: ExpensesItem[];
+    totalMoney: number;
+  };
 }
 
 export interface NewExpensesRequest {
@@ -32,5 +36,10 @@ export interface ExpensesItem {
 
 export interface ExpensesDaily {
   dailyExpensesList: ExpensesItem[];
+  totalMoney: number;
+}
+
+export interface ExpensesMonthly {
+  monthlyExpensesList: ExpensesItem[];
   totalMoney: number;
 }

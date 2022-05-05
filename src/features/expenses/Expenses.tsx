@@ -23,7 +23,7 @@ const Expenses = () => {
             }
           ]
         },
-        { path: 'calendar', element: <ExpensesCalendar /> },
+        { path: 'calendar/:date', element: <ExpensesCalendar /> },
         { path: 'report', element: <ExpensesReport /> }
       ]
     }

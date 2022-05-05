@@ -1,3 +1,4 @@
+import formatDate from 'common/logic/formatDate';
 import React, { useState } from 'react';
 import Loading from 'react-loading';
 import { Link, Outlet, useRoutes } from 'react-router-dom';
@@ -11,7 +12,7 @@ const Header = () => {
   const [active, setActive] = useState<number>(0);
   const links = [
     { to: 'expenses/editor', icon: 'plus-circle', text: 'Nhập liệu' },
-    { to: 'expenses/calendar', icon: 'calendar', text: 'Lịch' },
+    { to: `expenses/calendar/${formatDate(new Date())}`, icon: 'calendar', text: 'Lịch' },
     { to: 'expenses/report', icon: 'pie-chart', text: 'Báo cáo' },
     { to: 'other', icon: 'ellipsis-h', text: 'Khác' }
   ];
