@@ -3,6 +3,7 @@ import { Navigate, useRoutes } from 'react-router-dom';
 import ExpensesCalendar from './components/ExpensesCalendar';
 import ExpensesEditor from './components/ExpensesEditor';
 import ExpensesReport from './components/ExpensesReport';
+import ExpensesReportDetail from './components/ExpensesReportDetail';
 
 const Expenses = () => {
   const routes = useRoutes([
@@ -24,7 +25,19 @@ const Expenses = () => {
           ]
         },
         { path: 'calendar/:date', element: <ExpensesCalendar /> },
-        { path: 'report', element: <ExpensesReport /> }
+        {
+          path: 'report',
+          children: [
+            {
+              path: '',
+              element: <ExpensesReport />
+            },
+            {
+              path: ':categoryId',
+              element: <ExpensesReportDetail />
+            }
+          ]
+        }
       ]
     }
   ]);

@@ -4,7 +4,6 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import expensesApi from 'apis/expensesApi';
-import { useAppDispatch } from 'app/hooks';
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js';
 import CategoryItem from 'features/category/components/CategoryItem';
 import { useEffect, useState } from 'react';
@@ -12,50 +11,54 @@ import { Doughnut } from 'react-chartjs-2';
 import '../Expenses.css';
 import { ExpensesItem } from '../expensesModel';
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+interface ChartData {
+  labels?: string[];
+  datasets: ChartDatasets[];
+}
 
-const data = {
-  labels: [],
-  datasets: [
-    {
-      label: '',
-      data: [12, 19, 3, 5, 2, 3],
-      backgroundColor: [
-        'rgba(255, 99, 132, 0.2)',
-        'rgba(54, 162, 235, 0.2)',
-        'rgba(255, 206, 86, 0.2)',
-        'rgba(75, 192, 192, 0.2)',
-        'rgba(153, 102, 255, 0.2)',
-        'rgba(255, 159, 64, 0.2)'
-      ],
-      borderColor: [
-        'rgba(255, 99, 132, 1)',
-        'rgba(54, 162, 235, 1)',
-        'rgba(255, 206, 86, 1)',
-        'rgba(75, 192, 192, 1)',
-        'rgba(153, 102, 255, 1)',
-        'rgba(255, 159, 64, 1)'
-      ],
-      borderWidth: 1
-    }
-  ]
-};
+interface ChartDatasets {
+  labels?: string[];
+  data: number[];
+  backgroundColor: string[];
+  borderColor: string[];
+  borderWidth: number;
+}
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const ExpensesReport = () => {
   const [date, setDate] = useState<Date | null>(new Date());
-  const dispatch = useAppDispatch();
   const [monthlyExpenses, setMonthlyExpenses] = useState<ExpensesItem[]>([]);
   const [totalMoney, setTotalMoney] = useState<number>(0);
+  const [labels, setLabels] = useState<string[]>([]);
+  const [chartData, setChartData] = useState<ChartData>({
+    datasets: [{ labels: [], data: [], backgroundColor: [], borderColor: [], borderWidth: 1 }]
+  });
 
   useEffect(() => {
-    const dateFormat = date?.toISOString().substring(0, 7);
-    // dispatch(expensesActions.reportMonthlyExpensesBegin(dateFormat));
+    let dateFormat = '';
+    if (date) {
+      dateFormat = date.toISOString().substring(0, 7);
+    }
     const reportMonthlyExpenses = async () => {
-      if (dateFormat) {
-        const response = await expensesApi.reportMonthly(dateFormat);
-        setMonthlyExpenses(response.monthlyExpensesList);
-        setTotalMoney(response.totalMoney);
-      }
+      const response = await expensesApi.reportMonthly(dateFormat);
+      setMonthlyExpenses(response.monthlyExpensesList);
+      setTotalMoney(response.totalMoney);
+
+      let money: number[] = [];
+      let color: string[] = [];
+      let labels: string[] = [];
+      response.monthlyExpensesList.forEach((item) => {
+        money = [...money, item.money];
+        color = [...color, item.category.color];
+        labels = [...labels, item.category.name];
+      });
+      setLabels(labels);
+      setChartData({
+        datasets: [
+          { labels, data: money, backgroundColor: color, borderColor: color, borderWidth: 1 }
+        ]
+      });
     };
 
     reportMonthlyExpenses();
@@ -97,14 +100,21 @@ const ExpensesReport = () => {
       <div className="total-money" style={{ width: '100%', marginTop: '10px' }}>
         <strong>Tổng chi:</strong>
         <strong>{totalMoney.toLocaleString('en-US')}đ</strong>
-        {/* {loading ? (
-          <i className="fa fa-spinner fa-spin" aria-hidden="true"></i>
-        ) : (
-          <strong>{expensesDailyMoney.toLocaleString('en-US')}đ</strong>
-        )} */}
       </div>
 
-      <Doughnut data={data} className="chart" />
+      <Doughnut
+        data={chartData}
+        options={{
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (context) => labels[context.dataIndex]
+              }
+            }
+          }
+        }}
+        className="chart"
+      />
 
       <div style={{ width: '100%', height: '150px', overflowY: 'auto', marginTop: '10px' }}>
         {monthlyExpenses.map((item) => (
@@ -115,7 +125,7 @@ const ExpensesReport = () => {
               money={item.money}
               loading={false}
               showIconDelete={false}
-              url={`/expenses/editor/${item._id}`}
+              url={`/expenses/report/${item._id}`}
             />
           </div>
         ))}
