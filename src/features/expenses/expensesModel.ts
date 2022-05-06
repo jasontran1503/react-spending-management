@@ -2,7 +2,7 @@ import { Category } from 'features/category/categoryModel';
 
 export interface ExpensesState {
   isLoading: boolean;
-  // expensesList: ExpensesItem[];
+  expensesInMonthByCategory: ExpensesItem[];
   expensesDaily: {
     dailyExpensesList: ExpensesItem[];
     totalMoney: number;

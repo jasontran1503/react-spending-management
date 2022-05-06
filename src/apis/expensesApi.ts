@@ -44,6 +44,12 @@ const reportMonthly = async (date: string) => {
     .then((res) => res.data.data);
 };
 
+const getExpensesInMonthByCategory = async (date: string, categoryId: string) => {
+  return axiosApi
+    .get<DataResponse<ExpensesItem[]>>('expenses/monthly/detail', { params: { date, categoryId } })
+    .then((res) => res.data.data);
+};
+
 const expensesApi = {
   createExpenses,
   deleteExpenses,
@@ -51,7 +57,8 @@ const expensesApi = {
   getSingleExpenses,
   updateExpenses,
   getAllExpenses,
-  reportMonthly
+  reportMonthly,
+  getExpensesInMonthByCategory
 };
 
 export default expensesApi;

@@ -77,10 +77,29 @@ function* handleReportMonthlyExpenses(action: PayloadAction<string>) {
   }
 }
 
+function* handleGetExpensesInMonthByCategory(
+  action: PayloadAction<{ date: string; categoryId: string }>
+) {
+  try {
+    const response: ExpensesItem[] = yield call(
+      expensesApi.getExpensesInMonthByCategory,
+      action.payload.date,
+      action.payload.categoryId
+    );
+    yield put(expensesActions.getExpensesInMonthByCategorySuccess(response));
+  } catch (error) {
+    yield put(expensesActions.getExpensesInMonthByCategoryFail());
+  }
+}
+
 export default function* expensesSaga() {
   yield takeLeading(expensesActions.createExpensesBegin.type, handleCreateExpenses);
   yield takeLeading(expensesActions.updateExpensesBegin.type, handleUpdateExpenses);
   yield takeLeading(expensesActions.deleteExpensesBegin.type, handleDeleteExpenses);
   yield takeEvery(expensesActions.reportDailyExpensesBegin.type, handleReportDailyExpenses);
   yield takeEvery(expensesActions.reportMonthlyExpensesBegin.type, handleReportMonthlyExpenses);
+  yield takeEvery(
+    expensesActions.getExpensesInMonthByCategoryBegin.type,
+    handleGetExpensesInMonthByCategory
+  );
 }

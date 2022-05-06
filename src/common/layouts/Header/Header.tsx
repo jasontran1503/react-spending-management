@@ -1,7 +1,14 @@
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
 import formatDate from 'common/logic/formatDate';
-import React, { useState } from 'react';
+import { removeStorage } from 'common/logic/storage';
+import { setToken } from 'common/logic/token';
+import React from 'react';
 import Loading from 'react-loading';
-import { Link, Outlet, useRoutes } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate, useRoutes } from 'react-router-dom';
 import PrivateRoute from '../PrivateRoute';
 import './Header.css';
 
@@ -9,13 +16,14 @@ const Expenses = React.lazy(() => import('features/expenses/Expenses'));
 const Category = React.lazy(() => import('features/category/Category'));
 
 const Header = () => {
-  const [active, setActive] = useState<number>(0);
+  const navigate = useNavigate();
+  const [open, setOpen] = React.useState(false);
   const links = [
     { to: 'expenses/editor', icon: 'plus-circle', text: 'Nhập liệu' },
     { to: `expenses/calendar/${formatDate(new Date())}`, icon: 'calendar', text: 'Lịch' },
-    { to: 'expenses/report', icon: 'pie-chart', text: 'Báo cáo' },
-    { to: 'other', icon: 'ellipsis-h', text: 'Khác' }
+    { to: 'expenses/report', icon: 'pie-chart', text: 'Báo cáo' }
   ];
+
   const routes = useRoutes([
     {
       path: 'expenses/*',
@@ -42,18 +50,38 @@ const Header = () => {
   return (
     <>
       <nav className="nav">
-        {links.map((link, index) => (
-          <Link
+        {links.map((link) => (
+          <NavLink
+            className={(navData) => (navData.isActive ? 'nav__link nav-active' : 'nav__link')}
             to={link.to}
-            className={`nav__link ${active === index ? 'nav-active' : ''}`}
             key={link.text}
-            onClick={() => setActive(index)}
           >
             <i className={`fa fa-${link.icon}`} aria-hidden="true"></i>
             <span className="nav__text">{link.text}</span>
-          </Link>
+          </NavLink>
         ))}
+        <div className="nav__link" onClick={() => setOpen(true)}>
+          <i className="fa fa-sign-out" aria-hidden="true"></i>
+          <span className="nav__text">Đăng xuất</span>
+        </div>
       </nav>
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <DialogContent>
+          <DialogContentText>Bạn có chắc muốn đăng xuất?</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpen(false)}>Đóng</Button>
+          <Button
+            onClick={() => {
+              setToken(null);
+              removeStorage('token');
+              navigate('/auth');
+            }}
+          >
+            Đăng xuất
+          </Button>
+        </DialogActions>
+      </Dialog>
       {routes}
       <Outlet />
     </>

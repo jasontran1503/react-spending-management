@@ -33,7 +33,7 @@ const Expenses = () => {
               element: <ExpensesReport />
             },
             {
-              path: ':categoryId',
+              path: ':date/:categoryId',
               element: <ExpensesReportDetail />
             }
           ]

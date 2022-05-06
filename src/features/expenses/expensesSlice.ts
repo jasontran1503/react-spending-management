@@ -5,7 +5,7 @@ import { ExpensesDaily, ExpensesItem, ExpensesMonthly, ExpensesState } from './e
 
 const initialState: ExpensesState = {
   isLoading: false,
-  // expensesList: [],
+  expensesInMonthByCategory: [],
   expensesDaily: {
     dailyExpensesList: [],
     totalMoney: 0
@@ -16,18 +16,18 @@ const expensesSlice = createSlice({
   name: 'expenses',
   initialState,
   reducers: {
-    // Get all expenses
-    // getAllExpensesBegin: (state) => {
-    //   state.isLoading = true;
-    // },
-    // getAllExpensesSuccess: (state, action: PayloadAction<DataResponse<ExpensesItem[]>>) => {
-    //   state.isLoading = false;
-    //   state.expensesList = action.payload.data;
-    // },
-    // getAllExpensesFail: (state) => {
-    //   state.isLoading = false;
-    //   state.expensesList = [];
-    // },
+    // Get expenses in month by category
+    getExpensesInMonthByCategoryBegin: (state, action) => {
+      state.isLoading = true;
+    },
+    getExpensesInMonthByCategorySuccess: (state, action: PayloadAction<ExpensesItem[]>) => {
+      state.isLoading = false;
+      state.expensesInMonthByCategory = action.payload;
+    },
+    getExpensesInMonthByCategoryFail: (state) => {
+      state.isLoading = false;
+      state.expensesInMonthByCategory = [];
+    },
 
     // Report daily expenses
     reportDailyExpensesBegin: (state, action) => {
@@ -50,13 +50,9 @@ const expensesSlice = createSlice({
     },
     reportMonthlyExpensesSuccess: (state, action: PayloadAction<ExpensesMonthly>) => {
       state.isLoading = false;
-      // state.expensesDaily.dailyExpensesList = action.payload.dailyExpensesList;
-      state.expensesDaily.totalMoney = action.payload.totalMoney;
     },
     reportMonthlyExpensesFail: (state) => {
       state.isLoading = false;
-      // state.expensesDaily.dailyExpensesList = [];
-      state.expensesDaily.totalMoney = 0;
     },
 
     // Create new expenses
@@ -65,7 +61,6 @@ const expensesSlice = createSlice({
     },
     createExpensesSuccess: (state, action: PayloadAction<DataResponse<ExpensesItem>>) => {
       state.isLoading = false;
-      // state.expensesList = [...state.expensesList, action.payload.data];
       state.expensesDaily.dailyExpensesList = [
         ...state.expensesDaily.dailyExpensesList,
         action.payload.data
@@ -73,7 +68,6 @@ const expensesSlice = createSlice({
     },
     createExpensesFail: (state) => {
       state.isLoading = false;
-      // state.expensesList = [];
     },
 
     // Delete new expenses
@@ -89,6 +83,9 @@ const expensesSlice = createSlice({
           }
           return item._id !== action.payload.data._id;
         }
+      );
+      state.expensesInMonthByCategory = state.expensesInMonthByCategory.filter(
+        (item) => item._id !== action.payload.data._id
       );
     },
     deleteExpensesFail: (state) => {
@@ -114,7 +111,8 @@ const expensesSlice = createSlice({
 
 export const expensesActions = expensesSlice.actions;
 
-// export const selectExpensesList = (state: RootState) => state.expenses.expensesList;
+export const selectExpensesInMonthByCategory = (state: RootState) =>
+  state.expenses.expensesInMonthByCategory;
 export const selectExpensesLoading = (state: RootState) => state.expenses.isLoading;
 export const selectDailyExpensesList = (state: RootState) =>
   state.expenses.expensesDaily.dailyExpensesList;

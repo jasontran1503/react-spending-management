@@ -20,6 +20,7 @@
   font-size: 14px;
   color: #444444;
   text-decoration: none;
+  cursor: pointer;
 }
 
 .nav__link:hover {
