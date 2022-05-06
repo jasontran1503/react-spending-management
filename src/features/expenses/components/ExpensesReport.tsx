@@ -50,8 +50,8 @@ const ExpensesReport = () => {
       let labels: string[] = [];
       response.monthlyExpensesList.forEach((item) => {
         money = [...money, item.money];
-        color = [...color, item.category.color];
-        labels = [...labels, item.category.name];
+        color = [...color, item.category ? item.category.color : 'black'];
+        labels = [...labels, item.category ? item.category.name : 'Không có'];
       });
       setLabels(labels);
       setChartData({
@@ -108,7 +108,10 @@ const ExpensesReport = () => {
           plugins: {
             tooltip: {
               callbacks: {
-                label: (context) => labels[context.dataIndex]
+                label: (context) =>
+                  `${labels[context.dataIndex]}: ${context.dataset.data[
+                    context.dataIndex
+                  ].toLocaleString('en-US')}đ`
               }
             }
           }
@@ -125,7 +128,7 @@ const ExpensesReport = () => {
               money={item.money}
               loading={false}
               showIconDelete={false}
-              url={`/expenses/report/${item._id}`}
+              url={`/expenses/report/${item.category ? item.category._id : null}`}
             />
           </div>
         ))}
