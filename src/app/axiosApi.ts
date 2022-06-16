@@ -9,6 +9,7 @@ export interface DataResponse<T> {
 }
 
 const axiosApi = axios.create({
+  // baseURL: 'http://localhost:8000/api/',
   baseURL: 'https://spending-management.herokuapp.com/api/',
   headers: {
     'Content-Type': 'application/json'

@@ -33,7 +33,7 @@ function* handleGetCategories() {
   } catch (error) {
     const errorResponse = error as DataResponse<null>;
     yield put(categoryActions.getCategoryFail());
-    yield call(toastify, 'error', errorResponse.message);
+    yield call(toastify, 'error', errorResponse?.message);
   }
 }
 
@@ -46,7 +46,7 @@ function* handleDeleteCategory(action: PayloadAction<string>) {
   } catch (error) {
     const errorResponse = error as DataResponse<null>;
     yield put(categoryActions.deleteCategoryFail());
-    yield call(toastify, 'error', errorResponse.message);
+    yield call(toastify, 'error', errorResponse?.message);
   }
 }
 
@@ -60,7 +60,7 @@ function* handleCreateCategory(action: PayloadAction<CategoryRequest>) {
   } catch (error) {
     const errorResponse = error as DataResponse<null>;
     yield put(categoryActions.createCategoryFail());
-    yield call(toastify, 'error', errorResponse.message);
+    yield call(toastify, 'error', errorResponse?.message);
   }
 }
 
@@ -80,7 +80,7 @@ function* handleUpdateCategory(
   } catch (error) {
     const errorResponse = error as DataResponse<null>;
     yield put(categoryActions.updateCategoryFail());
-    yield call(toastify, 'error', errorResponse.message);
+    yield call(toastify, 'error', errorResponse?.message);
   }
 }
 

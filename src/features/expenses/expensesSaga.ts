@@ -19,7 +19,7 @@ function* handleCreateExpenses(action: PayloadAction<NewExpensesRequest>) {
   } catch (error) {
     const errorResponse = error as DataResponse<null>;
     yield put(expensesActions.createExpensesFail());
-    yield call(toastify, 'error', errorResponse.message);
+    yield call(toastify, 'error', errorResponse?.message);
   }
 }
 
@@ -39,7 +39,7 @@ function* handleUpdateExpenses(
   } catch (error) {
     const errorResponse = error as DataResponse<null>;
     yield put(expensesActions.updateExpensesFail());
-    yield call(toastify, 'error', errorResponse.message);
+    yield call(toastify, 'error', errorResponse?.message);
   }
 }
 
@@ -55,7 +55,7 @@ function* handleDeleteExpenses(action: PayloadAction<string>) {
   } catch (error) {
     const errorResponse = error as DataResponse<null>;
     yield put(expensesActions.deleteExpensesFail());
-    yield call(toastify, 'error', errorResponse.message);
+    yield call(toastify, 'error', errorResponse?.message);
   }
 }
 

@@ -16,7 +16,7 @@ function* handleLogin(action: PayloadAction<LoginRequest>) {
   } catch (error) {
     const errorResponse = error as DataResponse<null>;
     yield put(authActions.loginFail(error as DataResponse<null>));
-    yield call(toastify, 'error', errorResponse.message);
+    yield call(toastify, 'error', errorResponse?.message);
   }
 }
 
@@ -30,7 +30,7 @@ function* handleRegister(action: PayloadAction<RegisterRequest>) {
   } catch (error) {
     const errorResponse = error as DataResponse<null>;
     yield put(authActions.registerFail());
-    yield call(toastify, 'error', errorResponse.message);
+    yield call(toastify, 'error', errorResponse?.message);
   }
 }
 
@@ -42,7 +42,7 @@ function* handleGetCurrentUser() {
   } catch (error) {
     const errorResponse = error as DataResponse<null>;
     yield put(authActions.getCurrentUserFail());
-    yield call(toastify, 'error', errorResponse.message);
+    yield call(toastify, 'error', errorResponse?.message);
   }
 }
 
