@@ -66,7 +66,7 @@ const ExpensesCalendar = () => {
       </div>
 
       <div
-        style={{ width: 'auto', height: 'calc(45% - 85px)', overflowY: 'auto' }}
+        style={{ width: 'auto', height: 'calc(45% - 115px)', overflowY: 'auto' }}
         className="display-center"
       >
         <>
