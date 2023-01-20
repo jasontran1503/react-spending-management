@@ -10,7 +10,7 @@ export interface DataResponse<T> {
 
 const axiosApi = axios.create({
   // baseURL: 'http://localhost:8000/api/',
-  baseURL: 'https://spending-management.herokuapp.com/api/',
+  baseURL: 'https://nodejs-spending-management.vercel.app/api/',
   headers: {
     'Content-Type': 'application/json'
   }
